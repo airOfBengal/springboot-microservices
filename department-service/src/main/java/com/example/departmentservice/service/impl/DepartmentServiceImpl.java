@@ -5,42 +5,28 @@ import com.example.departmentservice.entity.Department;
 import com.example.departmentservice.repository.DepartmentRepository;
 import com.example.departmentservice.service.DepartmentService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
     private DepartmentRepository repository;
-
+    private ModelMapper modelMapper;
 
     @Override
     public DepartmentDto saveDepartment(DepartmentDto departmentDto) {
-        Department department = new Department(
-          departmentDto.getId(),
-                departmentDto.getDepartmentName(),
-                departmentDto.getDepartmentDescription(),
-                departmentDto.getDepartmentCode()
-        );
+        Department department = modelMapper.map(departmentDto, Department.class);
 
         Department savedDepartment = repository.save(department);
-        DepartmentDto savedDepartmentDto = new DepartmentDto(
-                savedDepartment.getId(),
-                savedDepartment.getDepartmentName(),
-                savedDepartment.getDepartmentDescription(),
-                savedDepartment.getDepartmentCode()
-        );
+        DepartmentDto savedDepartmentDto = modelMapper.map(savedDepartment, DepartmentDto.class);
         return savedDepartmentDto;
     }
 
     @Override
     public DepartmentDto getDepartmentByCode(String departmentCode) {
         Department department = repository.findByDepartmentCode(departmentCode);
-        DepartmentDto dto = new DepartmentDto(
-          department.getId(),
-          department.getDepartmentName(),
-          department.getDepartmentDescription(),
-          department.getDepartmentCode()
-        );
+        DepartmentDto dto = modelMapper.map(department, DepartmentDto.class);
         return dto;
     }
 }
