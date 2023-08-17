@@ -6,6 +6,7 @@ import com.example.employeeservice.dto.EmployeeDto;
 import com.example.employeeservice.entity.Employee;
 import com.example.employeeservice.exception.ResourceNotFoundException;
 import com.example.employeeservice.repository.EmployeeRepository;
+import com.example.employeeservice.service.ApiClient;
 import com.example.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,7 +21,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository repository;
     private ModelMapper modelMapper;
     //private RestTemplate restTemplate;
-    private WebClient webClient;
+    //private WebClient webClient;
+    private ApiClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -43,11 +45,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 //                "http://localhost:8090/api/departments/"+ employeeDto.getDepartmentCode(), DepartmentDto.class);
 //        DepartmentDto departmentDto = responseEntity.getBody();
 
-        DepartmentDto departmentDto = webClient.get()
-                .uri("http://localhost:8090/api/departments/"+ employeeDto.getDepartmentCode())
-                .retrieve()
-                .bodyToMono(DepartmentDto.class)
-                .block();
+//        DepartmentDto departmentDto = webClient.get()
+//                .uri("http://localhost:8090/api/departments/"+ employeeDto.getDepartmentCode())
+//                .retrieve()
+//                .bodyToMono(DepartmentDto.class)
+//                .block();
+
+        DepartmentDto departmentDto = apiClient.getDepartment(employeeDto.getDepartmentCode());
 
         ApiResponseDto apiResponseDto = new ApiResponseDto();
         apiResponseDto.setEmployee(employeeDto);
