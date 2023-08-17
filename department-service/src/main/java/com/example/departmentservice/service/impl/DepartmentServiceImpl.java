@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
@@ -16,6 +18,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto saveDepartment(DepartmentDto departmentDto) {
+
         Department department = modelMapper.map(departmentDto, Department.class);
 
         Department savedDepartment = repository.save(department);
