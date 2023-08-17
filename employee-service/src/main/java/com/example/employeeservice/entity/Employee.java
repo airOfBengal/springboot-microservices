@@ -18,5 +18,7 @@ public class Employee {
     private Long id;
     private String firstName;
     private String lastName;
+    @Column(nullable = false, unique = true)
     private String email;
+    private String departmentCode;
 }

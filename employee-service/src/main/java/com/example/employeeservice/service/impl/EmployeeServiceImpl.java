@@ -1,5 +1,7 @@
 package com.example.employeeservice.service.impl;
 
+import com.example.employeeservice.dto.ApiResponseDto;
+import com.example.employeeservice.dto.DepartmentDto;
 import com.example.employeeservice.dto.EmployeeDto;
 import com.example.employeeservice.entity.Employee;
 import com.example.employeeservice.exception.ResourceNotFoundException;
@@ -7,13 +9,16 @@ import com.example.employeeservice.repository.EmployeeRepository;
 import com.example.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository repository;
     private ModelMapper modelMapper;
+    private RestTemplate restTemplate;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -25,11 +30,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto getEmployeeById(Long id) {
+    public ApiResponseDto getEmployeeById(Long id) {
         Employee employee = repository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Employee", "id", id.toString())
         );
+
         EmployeeDto employeeDto = modelMapper.map(employee, EmployeeDto.class);
-        return employeeDto;
+        ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity(
+                "http://localhost:8090/api/departments/"+ employeeDto.getDepartmentCode(), DepartmentDto.class);
+        DepartmentDto departmentDto = responseEntity.getBody();
+
+        ApiResponseDto apiResponseDto = new ApiResponseDto();
+        apiResponseDto.setEmployee(employeeDto);
+        apiResponseDto.setDepartment(departmentDto);
+
+        return apiResponseDto;
     }
 }
